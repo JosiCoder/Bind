@@ -198,18 +198,17 @@ namespace Praeclarum.Bind
 
 			static Delegate CreateGenericEventHandler (EventInfo evt, Action d)
 			{
-				var handlerType = evt.EventHandlerType;
-				var handlerTypeInfo = handlerType.GetTypeInfo ();
-				var handlerInvokeInfo = handlerTypeInfo.GetDeclaredMethod ("Invoke");
-				var eventParams = handlerInvokeInfo.GetParameters();
+                var handlerType = evt.EventHandlerType;
+                var handlerTypeInfo = handlerType.GetTypeInfo();
+                var handlerInvokeInfo = handlerTypeInfo.GetDeclaredMethod("Invoke");
+                var eventParams = handlerInvokeInfo.GetParameters();
 
-				//lambda: (object x0, EventArgs x1) => d()
-				var parameters = eventParams.Select(p => Expression.Parameter(p.ParameterType, p.Name)).ToArray ();
-				var body = Expression.Call(Expression.Constant(d), d.GetType().GetTypeInfo ().GetDeclaredMethod ("Invoke"));
-				var lambda = Expression.Lambda(body, parameters);
+                //lambda: (object x0, EventArgs x1) => d()
+                var parameters = eventParams.Select(p => Expression.Parameter(p.ParameterType, p.Name)).ToArray();
+                var body = Expression.Call(Expression.Constant(d), d.GetType().GetTypeInfo().GetDeclaredMethod("Invoke"));
+                var lambda = Expression.Lambda(handlerType, body, parameters);
 
-				var delegateInvokeInfo = lambda.Compile ().GetMethodInfo ();
-				return delegateInvokeInfo.CreateDelegate (handlerType, null);
+                return lambda.Compile();
 			}
 
 			void UnsubscribeFromChangeNotificationEvent ()
