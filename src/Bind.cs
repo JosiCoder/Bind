@@ -102,7 +102,9 @@ namespace Praeclarum.Bind
 				if (f != null) {
 					f.SetValue (target, value);
 				} else if (p != null) {
-					p.SetValue (target, value, null);
+					if(p.CanWrite) {
+						p.SetValue(target, value, null);
+					}
 				} else {
 					ReportError ("Trying to SetValue on " + mem.GetType () + " member");
 					return false;
