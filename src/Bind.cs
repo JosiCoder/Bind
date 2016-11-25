@@ -397,7 +397,13 @@ namespace Praeclarum.Bind
 			//
 //			Debug.WriteLine ("WARNING EVAL COMPILED {0}", expr);
 			var lambda = Expression.Lambda (expr, Enumerable.Empty<ParameterExpression> ());
-			return lambda.Compile ().DynamicInvoke ();
+            var deleg = lambda.Compile ();
+            try {
+                return deleg.DynamicInvoke ();
+            }
+            catch (Exception ex) {
+                return null;
+            }
 		}
 	}
 
